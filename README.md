@@ -2,6 +2,11 @@
 Ansible Playbook for Kubernetes on Ubuntu 20.04
 
 
+After the Deployment of ToDo app, the Ingress service was configured:
+
+Ingress installation
+NGINX was installed as Ingress Controller
+"todo-ingress" Service was created, configured to use NGINX as Ingress Controller, and configured to present the "todo-app" Service over HTTP, on host todoapp.example.com, at the default "/" path
 DEPLOYMENT STEPS:
 
 All steps are performet on VM1:
