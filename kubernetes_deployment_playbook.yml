@@ -104,7 +104,7 @@
         
      - name: Pause 2 minutes to completely install kubernetes
        ansible.builtin.pause:
-         minutes: 5
+         minutes: 2
 
 # Kube_3 - Initialize Kubeadm master
 
