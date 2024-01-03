@@ -38,3 +38,5 @@ After a VM reboot, it is possible that Kubernetes cluster to be no longer availa
   	- swapoff -a
    	- exit
     	- strace -eopenat kubectl version
+
+To check if the Kubernetes cluster is now available, run "kubectl get nodes".
