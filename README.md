@@ -33,6 +33,7 @@ After a VM reboot, it is possible that Kubernetes cluster to be no longer availa
 	”The connection to the server <node>:6443 was refused - did you specify the right host or port?”
 
  In order to fix it, run the following commands, starting as kubernetes admin user:
+ 
  	- sudo -i
   	- swapoff -a
    	- exit
