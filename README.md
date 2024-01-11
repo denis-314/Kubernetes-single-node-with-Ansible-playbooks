@@ -8,10 +8,10 @@ DEPLOYMENT STEPS:
         - sudo apt install ansible
 
     2. Change directory to user home directory
-    	- cd /home/<user>
+        - cd /home/<user>
      
     3. Create a directory to store Ansible playbooks and change directory to it
-    	- mkdir ansible_playbooks
+        - mkdir ansible_playbooks
         - cd ansible_playbooks
      
     4. Create a YAML file for the ANsible playbook content
@@ -34,9 +34,9 @@ After a VM reboot, it is possible that Kubernetes cluster to be no longer availa
 
  In order to fix it, run the following commands, starting as kubernetes admin user:
  
- 	- sudo -i
-  	- swapoff -a
-   	- exit
-    	- strace -eopenat kubectl version
+        - sudo -i
+        - swapoff -a
+        - exit
+        - strace -eopenat kubectl version
 
 To check if the Kubernetes cluster is now available, run "kubectl get nodes".
