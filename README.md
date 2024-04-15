@@ -10,6 +10,7 @@ Follow the below Deployment Steps to deploy a Kubernetes Cluster using Ansible P
 4. If you want to add aditional nodes, run the same Deployment Steps from below on each Node, but use the kubernetes_install_node.yml file instead
    	- Change the Node Name in step „9. Set node hostname”
    	- Run the join command obtained previously at step 3:
+   	  	sudo kubeadm join <Master_Control_Plane_IP>:6443 --token <token_from_Control_Plane> --discovery-token-ca-cert-hash sha256:<Key_from_Control_Plane>
   
           sudo kubeadm join 10.40.0.132:6443 --token cg9fgp.ucsvbrgpw0vd2tic --discovery-token-ca-cert-hash sha256:0d472d7fb5907eebf9344e70258c62edc208db97721af240483ce686c8a6b5ab
 
