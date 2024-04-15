@@ -13,7 +13,6 @@ Follow the below steps to deploy a Kubernetes Cluster using Ansible Playbooks on
   
           sudo kubeadm join 10.40.0.132:6443 --token cg9fgp.ucsvbrgpw0vd2tic --discovery-token-ca-cert-hash sha256:0d472d7fb5907eebf9344e70258c62edc208db97721af240483ce686c8a6b5ab
 
-
    
 _____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
