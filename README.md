@@ -1,4 +1,4 @@
-Follow the below steps to deploy a Kubernetes CLuster using Ansible Playbooks on Ubuntu 20.04
+Follow the below steps to deploy a Kubernetes Cluster using Ansible Playbooks on Ubuntu 20.04
 
 _____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
