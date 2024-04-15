@@ -67,7 +67,6 @@
        shell: |
                sudo swapoff -a
                sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-               sudo hostnamectl set-hostname node2
                
      - name: enable cri-repo
        environment:
