@@ -3,7 +3,7 @@ Follow the below steps to deploy a Kubernetes Cluster using Ansible Playbooks on
 1. On Master Control Plane, run the kubernetes_install.yml. Use the Deployment steps below.
    	- Change the Node Name in steps „9. Set node hostname” and „22. taint node master”
    	  
-3. To find the join command, run:
+3. To find the join command, on Master Control Plane, run:
 
        kubeadm token create --print-join-command
    
