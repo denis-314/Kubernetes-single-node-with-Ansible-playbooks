@@ -1,0 +1,163 @@
+#https://www.checkmateq.com/blog/ansible-kubernetes
+
+# Kube_1 - Setup user kube for kubernetes
+
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: create the 'kube' user
+      user:
+        name: kube
+        append: yes
+        state: present
+        createhome: yes
+        shell: /bin/bash
+
+    - name: allow 'kube' sudo permission
+      lineinfile:
+        dest: /etc/sudoers
+        line: 'kube ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+# Kube_2 - Install CRI-O as Container runtime engine for kubernetes
+
+- hosts: localhost
+  become: yes
+  become_user: root
+  gather_facts: yes
+
+  tasks:
+     - name: Create CRI-O config file
+       file:
+         path: "/etc/modules-load.d/crio.conf"
+         state: "touch"
+
+     - name: add modules in conf file
+       blockinfile:
+         path: "/etc/modules-load.d/crio.conf"
+         block: |
+            overlay
+            br_netfilter
+
+     - name: Enable sysctl params
+       file:
+         path: "/etc/sysctl.d/99-kubernetes-cri.conf"
+         state: "touch"
+
+     - name: add configuration
+       blockinfile:
+         path: "/etc/sysctl.d/99-kubernetes-cri.conf"
+         block: |
+                net.bridge.bridge-nf-call-iptables = 1
+                net.ipv4.ip_forward = 1
+                net.bridge.bridge-nf-call-ip6tables = 1
+
+     - name: enable overlayFS & VxLan pod communication
+       shell: |
+               sudo modprobe overlay
+               sudo modprobe br_netfilter
+     - name: Reload parameters
+       command: sudo sysctl --system
+       
+     - name: Set node hostname
+       shell: |
+               sudo hostnamectl set-hostname node2
+               
+     - name: disable swap
+       shell: |
+               sudo swapoff -a
+               sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+               sudo hostnamectl set-hostname node2
+               
+     - name: enable cri-repo
+       environment:
+          OS: xUbuntu_20.04
+          VERSION: 1.23
+       shell: |
+                echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+                echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+
+                curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | apt-key add -
+                curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | apt-key add -
+     - name: Install cri-o and cri-o tools
+       shell: |
+               sudo apt-get update
+               sudo apt-get install cri-o cri-o-runc cri-tools -y
+               sudo systemctl daemon-reload
+               sudo systemctl enable crio --now
+
+     - name: Install dependencies
+       shell: |
+               sudo apt-get update
+               sudo apt-get install -y apt-transport-https curl
+               curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+               
+     - name: Create kubernetes repo file
+       file:
+         path: "/etc/apt/sources.list.d/kubernetes.list"
+         state: "touch"
+         
+     - name: Install dependencies2
+       shell: |
+               sudo install -m 0755 -d /etc/apt/keyrings
+               curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+               echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+               sudo apt-get update
+
+     - name: install kubernetes
+       shell: |
+               #sudo apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
+               sudo apt-get install -y kubelet kubeadm kubectl
+               sudo apt-mark hold kubelet kubeadm kubectl
+        
+     - name: Pause 2 minutes to completely install kubernetes
+       ansible.builtin.pause:
+         minutes: 2
+
+# Kube_3 - Initialize Kubeadm master
+
+- hosts: localhost
+  become: yes
+  become_user: root
+  gather_facts: yes
+  
+  tasks:
+    - name: initialize the cluster
+      shell: sudo kubeadm init --pod-network-cidr=192.168.0.0/16  --cri-socket=/var/run/crio/crio.sock  --ignore-preflight-errors Swap >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: create .kube directory
+      become: yes
+      become_user: kube
+      file:
+        path: /home/kube/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf
+      copy:
+        remote_src: yes
+        src: /etc/kubernetes/admin.conf
+        dest: /home/kube/.kube/config
+        owner: kube
+
+# Install Calico as Network Plugin for Kubernetes
+    - name: Install calico Pod network
+      become: yes
+      become_user: kube
+      shell:  kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+      args:
+        chdir: $HOME
+
+#------------------------------------------------------------------------------------------------
+
+# Taint node Master and Control plane so it can run Pods in a single-node configuration
+    - name: taint node master
+      become: yes
+      become_user: kube
+#      shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+       shell: kubectl taint node node2 node-role.kubernetes.io/control-plane:NoSchedule-
+      args:
+        chdir: $HOME
