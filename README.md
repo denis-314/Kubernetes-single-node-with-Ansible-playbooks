@@ -1,13 +1,13 @@
-Follow the below steps to deploy a Kubernetes Cluster using Ansible Playbooks on Ubuntu 20.04
+Follow the below Deployment Steps to deploy a Kubernetes Cluster using Ansible Playbooks on Ubuntu 20.04
 
-1. On Master Control Plane, run the kubernetes_install.yml. Use the Deployment steps below.
+1. On Master Control Plane, follow the Deployment Steps from below, but use the kubernetes_install.yml
    	- Change the Node Name in steps „9. Set node hostname” and „22. taint node master”
    	  
 3. To find the join command, on Master Control Plane, run:
 
        kubeadm token create --print-join-command
    
-4. On Nodes, run the kubernetes_install_node.yml. Use the same Deployment steps
+4. If you want to add aditional nodes, run the same Deployment Steps from below on each Node, but use the kubernetes_install_node.yml file instead
    	- Change the Node Name in step „9. Set node hostname”
    	- Run the join command obtained previously at step 3:
   
