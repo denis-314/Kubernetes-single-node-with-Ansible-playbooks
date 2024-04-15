@@ -45,4 +45,5 @@ To obtain the token and SHA key:
 
     kubeadm token create --print-join-command
     kubeadm token list
-    vi /etc/kubernetes/pki/ca.crt
+    openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \openssl dgst -sha256 -hex | sed 's/^.* //'
+
