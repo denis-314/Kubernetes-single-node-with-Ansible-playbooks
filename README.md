@@ -19,7 +19,7 @@ ________________________________________________________________________________
 DEPLOYMENT STEPS:
 
     l. Install Ansible:
-        - sudo apt install ansible
+    sudo apt install ansible
 
     2. Change directory to user home directory
         - cd /home/<user>
