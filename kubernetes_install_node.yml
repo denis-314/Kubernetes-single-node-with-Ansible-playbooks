@@ -5,7 +5,7 @@
 - hosts: localhost
   become: yes
   tasks:
-    - name: create the 'kube' user
+    - name: 1. create the 'kube' user
       user:
         name: kube
         append: yes
@@ -13,7 +13,7 @@
         createhome: yes
         shell: /bin/bash
 
-    - name: allow 'kube' sudo permission
+    - name: 2. allow 'kube' sudo permission
       lineinfile:
         dest: /etc/sudoers
         line: 'kube ALL=(ALL) NOPASSWD: ALL'
@@ -27,24 +27,24 @@
   gather_facts: yes
 
   tasks:
-     - name: Create CRI-O config file
+     - name: 3. Create CRI-O config file
        file:
          path: "/etc/modules-load.d/crio.conf"
          state: "touch"
 
-     - name: add modules in conf file
+     - name: 4. add modules in conf file
        blockinfile:
          path: "/etc/modules-load.d/crio.conf"
          block: |
             overlay
             br_netfilter
 
-     - name: Enable sysctl params
+     - name: 5. Enable sysctl params
        file:
          path: "/etc/sysctl.d/99-kubernetes-cri.conf"
          state: "touch"
 
-     - name: add configuration
+     - name: 6. add configuration
        blockinfile:
          path: "/etc/sysctl.d/99-kubernetes-cri.conf"
          block: |
@@ -52,23 +52,23 @@
                 net.ipv4.ip_forward = 1
                 net.bridge.bridge-nf-call-ip6tables = 1
 
-     - name: enable overlayFS & VxLan pod communication
+     - name: 7. enable overlayFS & VxLan pod communication
        shell: |
                sudo modprobe overlay
                sudo modprobe br_netfilter
      - name: Reload parameters
        command: sudo sysctl --system
        
-     - name: Set node hostname
+     - name: 8. Set node hostname
        shell: |
                sudo hostnamectl set-hostname node2
                
-     - name: disable swap
+     - name: 9 disable swap
        shell: |
                sudo swapoff -a
                sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
                
-     - name: enable cri-repo
+     - name: 10 enable cri-repo
        environment:
           OS: xUbuntu_20.04
           VERSION: 1.23
@@ -78,32 +78,32 @@
 
                 curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | apt-key add -
                 curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | apt-key add -
-     - name: Install cri-o and cri-o tools
+     - name: 11. Install cri-o and cri-o tools
        shell: |
                sudo apt-get update
                sudo apt-get install cri-o cri-o-runc cri-tools -y
                sudo systemctl daemon-reload
                sudo systemctl enable crio --now
 
-     - name: Install dependencies
+     - name: 12. Install dependencies
        shell: |
                sudo apt-get update
                sudo apt-get install -y apt-transport-https curl
                curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
                
-     - name: Create kubernetes repo file
+     - name: 13. Create kubernetes repo file
        file:
          path: "/etc/apt/sources.list.d/kubernetes.list"
          state: "touch"
          
-     - name: Install dependencies2
+     - name: 14. Install dependencies2
        shell: |
                sudo install -m 0755 -d /etc/apt/keyrings
                curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
                echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
                sudo apt-get update
 
-     - name: install kubernetes
+     - name: 15. install kubernetes
        shell: |
                #sudo apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
                sudo apt-get install -y kubelet kubeadm kubectl
