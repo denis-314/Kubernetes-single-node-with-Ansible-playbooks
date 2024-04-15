@@ -20,7 +20,7 @@ DEPLOYMENT STEPS:
     5. Copy the Ansible playbook content in it
         
     6. Make the file executable
-        - chmod 755 kubernetes.install.yml
+        - chmod 755 kubernetes_install.yml
 	
     7. Execute the Ansible playbook to deploy the Kubernetes cluster:
         - ansible-playbook -i hosts kubernetes_install.yml
