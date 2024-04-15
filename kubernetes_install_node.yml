@@ -56,19 +56,20 @@
        shell: |
                sudo modprobe overlay
                sudo modprobe br_netfilter
-     - name: Reload parameters
+               
+     - name: 8. Reload parameters
        command: sudo sysctl --system
        
-     - name: 8. Set node hostname
+     - name: 9. Set node hostname
        shell: |
                sudo hostnamectl set-hostname node2
                
-     - name: 9 disable swap
+     - name: 10 disable swap
        shell: |
                sudo swapoff -a
                sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
                
-     - name: 10 enable cri-repo
+     - name: 11 enable cri-repo
        environment:
           OS: xUbuntu_20.04
           VERSION: 1.23
@@ -78,32 +79,32 @@
 
                 curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | apt-key add -
                 curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | apt-key add -
-     - name: 11. Install cri-o and cri-o tools
+     - name: 12. Install cri-o and cri-o tools
        shell: |
                sudo apt-get update
                sudo apt-get install cri-o cri-o-runc cri-tools -y
                sudo systemctl daemon-reload
                sudo systemctl enable crio --now
 
-     - name: 12. Install dependencies
+     - name: 13. Install dependencies
        shell: |
                sudo apt-get update
                sudo apt-get install -y apt-transport-https curl
                curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
                
-     - name: 13. Create kubernetes repo file
+     - name: 14. Create kubernetes repo file
        file:
          path: "/etc/apt/sources.list.d/kubernetes.list"
          state: "touch"
          
-     - name: 14. Install dependencies2
+     - name: 15. Install dependencies2
        shell: |
                sudo install -m 0755 -d /etc/apt/keyrings
                curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
                echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
                sudo apt-get update
 
-     - name: 15. install kubernetes
+     - name: 16. install kubernetes
        shell: |
                #sudo apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
                sudo apt-get install -y kubelet kubeadm kubectl
