@@ -9,6 +9,11 @@ Follow the below steps to deploy a Kubernetes Cluster using Ansible Playbooks on
    
 4. On Nodes, run the kubernetes_install_node.yml. Use the same Deployment steps
    	- Change the Node Name in step „9. Set node hostname”
+   	- Run the join command obtained previously at step 3:
+  
+          sudo kubeadm join 10.40.0.132:6443 --token cg9fgp.ucsvbrgpw0vd2tic --discovery-token-ca-cert-hash sha256:0d472d7fb5907eebf9344e70258c62edc208db97721af240483ce686c8a6b5ab
+
+
    
 _____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
