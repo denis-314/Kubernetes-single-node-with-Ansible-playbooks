@@ -15,7 +15,7 @@ DEPLOYMENT STEPS:
         - cd ansible_playbooks
      
     4. Create a YAML file for the ANsible playbook content
-        - touch kubernetes.install.yml
+        - touch kubernetes_install.yml
      
     5. Copy the Ansible playbook content in it
         
