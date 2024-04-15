@@ -14,7 +14,10 @@ Follow the below Deployment Steps to deploy a Kubernetes Cluster using Ansible P
   
           sudo kubeadm join 10.40.0.132:6443 --token cg9fgp.ucsvbrgpw0vd2tic --discovery-token-ca-cert-hash sha256:0d472d7fb5907eebf9344e70258c62edc208db97721af240483ce686c8a6b5ab
 
-   
+	- If multiple sockets are present and the join command gives an error about this, use the flag --cri-socket= to point to the right socket. For example:
+
+          sudo kubeadm join 10.40.0.132:6443 --cri-socket=unix:///var/run/crio/crio.sock --token cg9fgp.ucsvbrgpw0vd2tic --discovery-token-ca-cert-hash sha256:0d472d7fb5907eebf9344e70258c62edc208db97721af240483ce686c8a6b5ab
+
 _____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 DEPLOYMENT STEPS:
