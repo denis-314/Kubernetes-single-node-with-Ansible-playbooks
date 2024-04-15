@@ -61,7 +61,7 @@
        
      - name: Set node hostname
        shell: |
-               sudo hostnamectl set-hostname node2
+               sudo hostnamectl set-hostname node3
                
      - name: disable swap
        shell: |
@@ -156,7 +156,6 @@
     - name: taint node master
       become: yes
       become_user: kube
-#      shell: kubectl taint nodes --all node-role.kubernetes.io/master-
-       shell: kubectl taint node node2 node-role.kubernetes.io/control-plane:NoSchedule-
+       shell: kubectl taint node node3 node-role.kubernetes.io/control-plane:NoSchedule-
       args:
         chdir: $HOME
