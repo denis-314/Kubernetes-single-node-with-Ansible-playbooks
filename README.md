@@ -41,7 +41,7 @@ After a VM reboot, it is possible that Kubernetes cluster to be no longer availa
 
 To check if the Kubernetes cluster is now available, run "kubectl get nodes".
 
-To obtain the token and SHA key:
+To generate the join node command on the control-plane master node, or to list the token and SHA key:
 
     kubeadm token create --print-join-command
     kubeadm token list
