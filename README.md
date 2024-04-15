@@ -43,5 +43,6 @@ To check if the Kubernetes cluster is now available, run "kubectl get nodes".
 
 To obtain the token and SHA key:
 
+    kubeadm token create --print-join-command
     kubeadm token list
     vi /etc/kubernetes/pki/ca.crt
